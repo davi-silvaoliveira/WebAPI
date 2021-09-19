@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: WebAPI/Dockerfile
+
+  database:
+    #Pull the latest mysql image
+    image: mysql:8.0.22
