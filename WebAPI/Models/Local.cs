@@ -48,6 +48,63 @@ namespace WebAPI.Models
             }
             retorno.Close();
             return locais;
+        }                
+
+        public Local Inserir()
+        {
+            using (Connection.Database DB = new Connection.Database())
+            {
+                
+                var query = "call insert_local(@nome, @discrepancias, @concordancias);";
+                MySqlCommand cmd = new MySqlCommand(query, DB.connection);
+
+                cmd.Parameters.Add("@nome", MySqlDbType.VarChar);
+                cmd.Parameters["@nome"].Value = this.nome;
+
+                cmd.Parameters.Add("@discrepancias", MySqlDbType.Int32);
+                cmd.Parameters["@discrepancias"].Value = this.discrepancias;
+
+                cmd.Parameters.Add("@concordancias", MySqlDbType.Int32);
+                cmd.Parameters["@concordancias"].Value = this.concordancias;
+
+                this.id = Convert.ToInt32(cmd.ExecuteScalar());                
+
+                return this;
+            }
+        }
+
+        public static Local BuscarLocal(string nome)
+        {
+            using (Connection.Database DB = new Connection.Database())
+            {
+                Local loc = new Local();
+                string query = "select * from local where nome = '" + nome + "';";
+                MySqlDataReader reader = DB.ReturnCommand(query);
+                reader.Read();
+
+                loc.id = int.Parse(reader["id"].ToString());
+                loc.nome = reader["nome"].ToString();
+                loc.discrepancias = int.Parse(reader["discrepancias"].ToString());
+                loc.concordancias = int.Parse(reader["concordancias"].ToString());
+
+                reader.Close(); return loc;
+
+                /*try
+                {
+                    reader.Read();
+
+                    loc.id = int.Parse(reader["id"].ToString());
+                    loc.nome = reader["nome"].ToString();
+                    loc.discrepancias = int.Parse(reader["discrepancias"].ToString());
+                    loc.concordancias = int.Parse(reader["concordancias"].ToString());
+
+                    reader.Close(); return loc;
+                }
+                catch
+                {
+                    reader.Close(); return null;
+                }*/
+            }
         }
     }
 }

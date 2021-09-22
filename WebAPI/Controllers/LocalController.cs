@@ -14,21 +14,40 @@ namespace WebAPI.Controllers
 {
     public class LocalController : Controller
     {
-        List<Local> teste = new List<Local>(new Local[]
+        /*List<Local> teste = new List<Local>(new Local[]
         {
             new Local(3, "São Paulo", 1, 0),
             new Local(2, "Rio de Janeiro", 5, 2),
             new Local(4, "Taubaté", 2, 3)
-        });
+        });*/
 
+
+        ///
         Local local = new Local();
 
+        //Registrando locais na API
+        [HttpPost]
+        [ActionName("Insert")]
+        public Local Insert([FromBody] Local loc)
+        {
+            return loc.Inserir();
+        }
+
+        //Buscando locais pelo ID
+        [HttpGet]
+        [ActionName("getLocal")]
+        public Local Get(string nome)
+        {
+            local = Local.BuscarLocal(nome);            
+            return local;
+        }
+
+        //Buscando todos os locais
         [HttpGet]
         [ActionName("ListAll")]
         public IEnumerable ListAll()
         {
-            return local.ListarTodos();
-            /*try
+            try
             {
                 return local.ListarTodos();
             }
@@ -36,26 +55,7 @@ namespace WebAPI.Controllers
             {
                 RedirectToAction("Index", "Home");
                 return null;
-            }*/
-        }
-
-        /*[HttpGet]
-        [ActionName("getLivro")]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1\n", "value2\n" };
-        }*/
-
-        /*public Local Get(int id)
-        {
-            var local = locais.FirstOrDefault((p) => p. == id);
-            if (livro == null)
-            {
-                var resp = new HttpResponseMessage(HttpStatusCode.NotFound);
-                throw new HttpResponseException(resp);
             }
-            //locais.
-            return livro;
-        }*/
+        }
     }
 }
