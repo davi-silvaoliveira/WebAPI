@@ -73,6 +73,47 @@ namespace WebAPI.Models
             }
         }
 
+        public static void Inserir(string name)
+        {
+            using (Connection.Database DB = new Connection.Database())
+            {
+
+                var query = "call insert_local(@nome, @discrepancias, @concordancias);";
+                MySqlCommand cmd = new MySqlCommand(query, DB.connection);
+
+                cmd.Parameters.Add("@nome", MySqlDbType.VarChar);
+                cmd.Parameters["@nome"].Value = name;
+
+                cmd.Parameters.Add("@discrepancias", MySqlDbType.Int32);
+                cmd.Parameters["@discrepancias"].Value = 0;
+
+                cmd.Parameters.Add("@concordancias", MySqlDbType.Int32);
+                cmd.Parameters["@concordancias"].Value = 0;
+
+                cmd.ExecuteNonQuery();
+
+                //this.id = Convert.ToInt32(cmd.ExecuteScalar());
+
+                //return this;
+            }
+        }
+
+        public static void ClimaCerto(string nome)
+        {
+            using (Connection.Database DB = new Connection.Database())
+            {
+                string query;
+                int x = Local.VerificarLocal(nome);
+                if (x == 0)
+                {
+                    Local.Inserir(nome);
+                }
+
+                query = "call update_concordancia('" + nome + "')";
+                DB.ExecuteCommand(query);
+            }
+        }
+
         public static Local BuscarLocal(string nome)
         {
             using (Connection.Database DB = new Connection.Database())
@@ -87,23 +128,29 @@ namespace WebAPI.Models
                 loc.discrepancias = int.Parse(reader["discrepancias"].ToString());
                 loc.concordancias = int.Parse(reader["concordancias"].ToString());
 
-                reader.Close(); return loc;
+                reader.Close(); return loc;                
+            }
+        }
 
-                /*try
+        public static int VerificarLocal(string name)
+        {
+            using (Connection.Database DB = new Connection.Database())
+            {
+                //int id;
+                string query1 = "select * from local where nome = '" + name + "';";
+                MySqlDataReader reader = DB.ReturnCommand(query1);
+                reader.Read();
+
+                if(reader.HasRows == false)
                 {
-                    reader.Read();
+                    reader.Close(); return 0;
 
-                    loc.id = int.Parse(reader["id"].ToString());
-                    loc.nome = reader["nome"].ToString();
-                    loc.discrepancias = int.Parse(reader["discrepancias"].ToString());
-                    loc.concordancias = int.Parse(reader["concordancias"].ToString());
-
-                    reader.Close(); return loc;
+                    //id = Convert.ToInt32(cmd.ExecuteScalar()); return id;
                 }
-                catch
+                else
                 {
-                    reader.Close(); return null;
-                }*/
+                    reader.Close(); return 1;
+                }
             }
         }
     }

@@ -14,15 +14,11 @@ namespace WebAPI.Controllers
 {
     public class LocalController : Controller
     {
-        /*List<Local> teste = new List<Local>(new Local[]
-        {
-            new Local(3, "São Paulo", 1, 0),
-            new Local(2, "Rio de Janeiro", 5, 2),
-            new Local(4, "Taubaté", 2, 3)
-        });*/
 
 
         ///
+      
+        
         Local local = new Local();
 
         //Registrando locais na API
@@ -33,7 +29,23 @@ namespace WebAPI.Controllers
             return loc.Inserir();
         }
 
-        //Buscando locais pelo ID
+        //Atualizando registro de concordâncias
+        [HttpPut]
+        [ActionName("ClimaOK")]
+        public bool Insert([FromBody] string nome)
+        {
+            try
+            {
+                Local.ClimaCerto(nome);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        //Buscando locais pelo nome
         [HttpGet]
         [ActionName("getLocal")]
         public Local Get(string nome)

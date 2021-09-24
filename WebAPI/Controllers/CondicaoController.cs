@@ -4,13 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using WebAPI.Models;
+using WebAPI.Database;
+
 namespace WebAPI.Controllers
 {
     public class CondicaoController : Controller
     {
-        public IActionResult Index()
+        [HttpPost]
+        [ActionName("insertCond")]
+        public void Insert([FromBody] Condicao cond)
         {
-            return View();
+            cond.Inserir();
         }
     }
 }

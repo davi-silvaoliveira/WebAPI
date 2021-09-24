@@ -17,7 +17,8 @@ namespace WebAPI.Database
             {
                 connection = new MySqlConnection("server = host.docker.internal; port = 3308; database = web_api; user id = root; password = root");
                 //connection = new MySqlConnection("server = localhost; database = web_api; user id = root; password = root");
-                connection.Open();
+                if(connection.State == ConnectionState.Closed)
+                    connection.Open();
             }
 
             public void ExecuteCommand(string query)

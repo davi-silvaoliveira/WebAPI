@@ -11,13 +11,11 @@ namespace WebAPI.Controllers
 {
     public class SensacaoController : Controller
     {
-        Sensacao sensacao = new Sensacao();
-
         [HttpPost]
-        [ActionName("Insert")]
-        public bool Insert(string local, int temp_user, int temp_api)
+        [ActionName("insertTemp")]
+        public void Insert([FromBody] Sensacao feels)
         {
-                return sensacao.Inserir(local, temp_user, temp_api);
+            feels.Inserir();
         }
     }
 }

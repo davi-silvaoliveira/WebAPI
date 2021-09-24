@@ -15,24 +15,31 @@ namespace WebAPI.Models
         public int temp_api { get; set; }
         public int  temp_user { get; set; }
         public string sens_user { get; set; }
-
+        public string nome_cidade { get; set; }
         public Sensacao() { }
 
-        public bool Inserir(string local, int temp_user, int temp_api)
+        public Sensacao(string name, int temp_user, int temp_api, string sens_user) 
+        {
+            this.nome_cidade = name; this.temp_user = temp_user; this.temp_api = temp_api; this.sens_user = sens_user;
+        }
+
+        public void Inserir()
         {
             using (Connection.Database DB = new Connection.Database())
             {
-                bool bob;
-                try
+                string query;
+                int x = Local.VerificarLocal(this.nome_cidade);
+                if(x == 0)
                 {
-                    var query = "call nova_discrepancia_sencacao ('" + local + "', " + temp_user + ", " + temp_api + ");";
-                    DB.ExecuteCommand(query);
-                    bob = true; return bob;
+                    Local.Inserir(this.nome_cidade);
                 }
-                catch
-                {
-                    bob = false; return bob;
-                }
+
+                if (this.sens_user != null)
+                    query = "call nova_discrepancia_temp ('" + this.nome_cidade + "', null, " + this.temp_api + ", '" + this.sens_user + "');";
+                else
+                    query = "call nova_discrepancia_temp ('" + this.nome_cidade + "', " + this.temp_user + ", " + this.temp_api + ", null);";
+
+                DB.ExecuteCommand(query);
             }
         }
     }
